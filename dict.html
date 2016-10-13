@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title></title>
+</head>
+
+<body>
+	<div>
+		<input id="word" type="text" value="" placeholder="請輸入中文片語" />
+		<input id="query" type="button" value="查詢" />
+		<textarea id="result" rows="4"></textarea>
+	</div>
+    <script type="text/javascript" src="//code.jquery.com/jquery-latest.min.js"></script>
+    <script type="text/javascript">
+        function query_word(word)
+        {
+			$("#result").val("查詢中...");
+			
+            $.ajax(
+            {
+                url: "//query.yahooapis.com/v1/public/yql",
+                jsonp: "callback",
+                dataType: "jsonp",
+                data:
+                {
+                    q: "select * from json where url='https://glosbe.com/gapi/translate?from=zho&dest=eng&format=json&pretty=true&phrase=" +
+                        word + "'",
+                    diagnostics: false,
+                    format: "json"
+                },
+                success: function(response)
+                {
+                    console.log(response);
+
+                    if (response.query.results.json.tuc)
+                    {
+						var words = "";
+						
+						$.each(response.query.results.json.tuc, function(k, v) {
+							if (v.phrase) {
+								console.log(v.phrase.text);
+								words += v.phrase.text + "\n";
+							}
+						});
+						
+						$("#result").val(words);
+                    }
+                }
+            });
+        }
+
+        $(document).ready(function()
+        {
+            $("#query").click(function() {
+				var word = $("#word").val();
+				query_word(word);
+			});
+        });
+    </script>
+</body>
+
+</html>
