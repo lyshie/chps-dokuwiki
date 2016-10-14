@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width" />
-    <title>英文查詢</title>
+    <title>英文查詢與 Pixabay</title>
     <link href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css"
         rel="stylesheet">
 </head>
@@ -85,6 +85,15 @@
             {
                 var word = jQuery.trim(jQuery("#word").val());
                 query_word(word);
+            });
+
+            jQuery(document).on('click', '.clipboard', function()
+            {
+                var text = jQuery(this).attr(
+                    'data-clipboard-text');
+                window.open(
+                    'https://pixabay.com/zh/photos/?q=' +
+                    text, '_blank');
             });
         });
     </script>
