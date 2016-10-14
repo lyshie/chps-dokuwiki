@@ -48,7 +48,8 @@
                 success: function(response)
                 {
                     jQuery("#result").empty();
-                    if (response.query.results && response.query.results
+                    if (response.query && response.query.results &&
+                        response.query.results
                         .json.tuc)
                     {
 
