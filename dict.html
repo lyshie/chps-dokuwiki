@@ -23,62 +23,71 @@
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.5.12/clipboard.min.js"></script>
     <script type="text/javascript">
-        function query_word(word)
-        {
-            jQuery("#result").empty();
-            jQuery("#dropdown").text('查詢中...');
-
-            jQuery.ajax(
-            {
-                url: "//query.yahooapis.com/v1/public/yql",
-                jsonp: "callback",
-                dataType: "jsonp",
-                data:
-                {
-                    q: "select * from json where url='https://glosbe.com/gapi/translate?from=zho&dest=eng&format=json&pretty=true&phrase=" +
-                        word + "'",
-                    diagnostics: false,
-                    format: "json"
-                },
-                error: function()
-                {
-                    jQuery("#result").empty();
-                    jQuery("#dropdown").text('查詢失敗！');
-                },
-                success: function(response)
-                {
-                    jQuery("#result").empty();
-                    if (response.query && response.query.results &&
-                        response.query.results
-                        .json.tuc)
-                    {
-
-                        jQuery.each(response.query.results.json.tuc,
-                            function(k, v)
-                            {
-                                if (v.phrase)
-                                {
-                                    jQuery("#result").append(
-                                        '<li><a class="clipboard" href="#" data-clipboard-text="' +
-                                        v.phrase.text +
-                                        '">' + v.phrase.text +
-                                        '</a></li>');
-                                }
-                            });
-                        jQuery("#dropdown").html(
-                            '下拉複製<span class="caret"></span>'
-                        );
-                    }
-                    else
-                    {
-                        jQuery("#dropdown").text('查詢失敗！');
-                    }
-                }
-            });
-        }
-
         jQuery(document).ready(function()
         {
+            function query_word(word)
+            {
+                jQuery("#result").empty();
+                jQuery("#dropdown").text('查詢中...');
+
+                jQuery.ajax(
+                {
+                    url: "//query.yahooapis.com/v1/public/yql",
+                    jsonp: "callback",
+                    dataType: "jsonp",
+                    data:
+                    {
+                        q: "select * from json where url='https://glosbe.com/gapi/translate?from=zho&dest=eng&format=json&pretty=true&phrase=" +
+                            word + "'",
+                        diagnostics: false,
+                        format: "json"
+                    },
+                    error: function()
+                    {
+                        jQuery("#result").empty();
+                        jQuery("#dropdown").text('查詢失敗！');
+                    },
+                    success: function(response)
+                    {
+                        jQuery("#result").empty();
+                        if (response.query && response.query
+                            .results &&
+                            response.query.results
+                            .json.tuc)
+                        {
+
+                            jQuery.each(response.query.results
+                                .json.tuc,
+                                function(k, v)
+                                {
+                                    if (v.phrase)
+                                    {
+                                        jQuery(
+                                            "#result"
+                                        ).append(
+                                            '<li><a class="clipboard" href="#" data-clipboard-text="' +
+                                            v.phrase
+                                            .text +
+                                            '">' +
+                                            v.phrase
+                                            .text +
+                                            '</a></li>'
+                                        );
+                                    }
+                                });
+                            jQuery("#dropdown").html(
+                                '下拉複製<span class="caret"></span>'
+                            );
+                        }
+                        else
+                        {
+                            jQuery("#dropdown").text(
+                                '查詢失敗！');
+                        }
+                    }
+                });
+            }
+
             new Clipboard('.clipboard');
 
             jQuery("#query").click(function()
