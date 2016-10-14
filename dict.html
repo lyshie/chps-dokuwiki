@@ -4,22 +4,31 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width" />
-    <title></title>
+    <title>英文查詢</title>
+    <link href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css"
+        rel="stylesheet">
 </head>
 
 <body>
-	<div>
-		<input id="word" type="text" value="" placeholder="請輸入中文片語" />
-		<input id="query" type="button" value="查詢" />
-		<textarea id="result" rows="4"></textarea>
-	</div>
-    <script type="text/javascript" src="//code.jquery.com/jquery-latest.min.js"></script>
+    <div class="input-group">
+        <input id="word" type="text" class="form-control" value="" placeholder="請輸入中文片語">
+        <div class="input-group-btn">
+            <button id="query" type="button" class="btn btn-default">查詢</button>
+            <button id="dropdown" type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown"
+                aria-haspopup="true" aria-expanded="false">下拉複製<span class="caret"></span></button>
+            <ul id="result" class="dropdown-menu dropdown-menu-right"></ul>
+        </div>
+    </div>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.5.12/clipboard.min.js"></script>
     <script type="text/javascript">
         function query_word(word)
         {
-			$("#result").val("查詢中...");
-			
-            $.ajax(
+            jQuery("#result").empty();
+            jQuery("#dropdown").text('查詢中...');
+
+            jQuery.ajax(
             {
                 url: "//query.yahooapis.com/v1/public/yql",
                 jsonp: "callback",
@@ -31,32 +40,50 @@
                     diagnostics: false,
                     format: "json"
                 },
+                error: function()
+                {
+                    jQuery("#result").empty();
+                    jQuery("#dropdown").text('查詢失敗！');
+                },
                 success: function(response)
                 {
-                    console.log(response);
-
-					var words = "";
+                    jQuery("#result").empty();
                     if (response.query.results.json.tuc)
                     {
-						
-						$.each(response.query.results.json.tuc, function(k, v) {
-							if (v.phrase) {
-								console.log(v.phrase.text);
-								words += v.phrase.text + "\n";
-							}
-						});
+
+                        jQuery.each(response.query.results.json.tuc,
+                            function(k, v)
+                            {
+                                if (v.phrase)
+                                {
+                                    jQuery("#result").append(
+                                        '<li><a class="clipboard" href="#" data-clipboard-text="' +
+                                        v.phrase.text +
+                                        '">' + v.phrase.text +
+                                        '</a></li>');
+                                }
+                            });
+                        jQuery("#dropdown").html(
+                            '下拉複製<span class="caret"></span>'
+                        );
                     }
-					$("#result").val(words);
+                    else
+                    {
+                        jQuery("#dropdown").text('查詢失敗！');
+                    }
                 }
             });
         }
 
-        $(document).ready(function()
+        jQuery(document).ready(function()
         {
-            $("#query").click(function() {
-				var word = $("#word").val();
-				query_word(word);
-			});
+            new Clipboard('.clipboard');
+
+            jQuery("#query").click(function()
+            {
+                var word = jQuery.trim(jQuery("#word").val());
+                query_word(word);
+            });
         });
     </script>
 </body>
