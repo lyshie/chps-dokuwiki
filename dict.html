@@ -96,16 +96,21 @@
                 query_word(word);
             });
 
-            jQuery(document).on('click', '.clipboard', function()
+            function openPage(url) {
+                window.open(url, '_blank');
+            }
+
+            jQuery(document).on('click', '.clipboard', function(e)
             {
+                e.preventDefault();
                 var text = jQuery(this).attr(
                     'data-clipboard-text');
-                window.open(
+                setTimeout(openPage(
                     'https://pixabay.com/zh/photos/?q=' +
-                    text, '_blank');
-                window.open(
+                    text), 100);
+                setTimeout(openPage(
                     'https://openclipart.org/search/?query=' +
-                    text, '_blank');
+                    text), 100);
             });
         });
     </script>
